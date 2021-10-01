@@ -1,4 +1,4 @@
-export type Gist = {
+export type GithubGist = {
     comments: number, 
     comments_url: string,
     commits_url: string,
