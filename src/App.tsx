@@ -103,7 +103,7 @@ export default function App() {
         <Button variant="outlined" onClick={onSubmit}>Search</Button>
       </Stack>
       {/* search results (populous or no results) or errors/result of bad requests go here */}
-      <div>{submitted && gists !== undefined ? gistsTable(gists, term) : undefined}</div>
+      <div>{submitted && gists !== undefined ? gistsTable(gists) : undefined}</div>
       {/* TODO: clean up UI */}
     </div>
   );
