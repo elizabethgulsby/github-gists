@@ -1,9 +1,22 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Paper, Stack, Table, TableContainer, TableCell, TableHead, TableBody, TableRow, Checkbox } from '@mui/material';
+import { Button, Input, Paper, Stack, Table, TableContainer, TableCell, TableHead, TableRow, Checkbox } from '@mui/material';
 import { GithubGist } from '../types/gist';
 import Gist from 'react-gist';
 import './App.css';
+
+export const getGists = async(user: string, set: (value: React.SetStateAction<GithubGist[] | undefined>) => any) => {
+  try {
+    const response = await fetch("https:api.github.com/users/" + user + "/gists", {
+      method: 'GET'
+    });
+    const userGists = await response.json();
+    console.log(userGists);
+    set(userGists);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export default function App() {
   // setting up state
@@ -20,17 +33,17 @@ export default function App() {
     }
   }, []);
 
-  async function getGists (user: string) {
-    try {
-      const response = await fetch("https:api.github.com/users/" + user + "/gists", {
-        method: 'GET'
-      });
-      const userGists = await response.json();
-      setGists(userGists);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // async function getGists (user: string) {
+  //   try {
+  //     const response = await fetch("https:api.github.com/users/" + user + "/gists", {
+  //       method: 'GET'
+  //     });
+  //     const userGists = await response.json();
+  //     setGists(userGists);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const addFav = (event: React.ChangeEvent<HTMLInputElement>, favorite: number) => {
     // Check if the favorited item exists in the current list of favorites
@@ -57,9 +70,8 @@ export default function App() {
         <TableHead>
           <TableRow>
             <TableCell>Gists</TableCell>
-            <TableCell align="right">Favorite?</TableCell>
+            <TableCell align="left">Favorite?</TableCell>
           </TableRow>
-          <TableBody>
             {gists.map((g, i) => (
               <TableRow
                 key={i}
@@ -73,9 +85,7 @@ export default function App() {
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody>
         </TableHead>
-
         </Table>
         </TableContainer>
       )
@@ -92,19 +102,18 @@ export default function App() {
 
   // TODO: maybe re-add the event for preventDefault()
   const onSubmit = () => {
-    getGists(term);
+    getGists(term, setGists);
     setSubmitted(true); 
   };
 
   return (
     <div className="App">
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
         <Input onChange={handleChange} />
-        <Button variant="outlined" onClick={onSubmit}>Search</Button>
+        <Button variant="outlined" size="small" onClick={onSubmit}>Search</Button>
       </Stack>
       {/* search results (populous or no results) or errors/result of bad requests go here */}
       <div>{submitted && gists !== undefined ? gistsTable(gists) : undefined}</div>
-      {/* TODO: clean up UI */}
     </div>
   );
 }
