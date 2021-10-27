@@ -3,8 +3,9 @@ import { shallow } from 'enzyme';
 // import userEvent from '@testing-library/user-event';
 import { getGists } from './App';
 import App from './App';
-import { Checkbox } from '@mui/material';
+import { Button, Checkbox, Input } from '@mui/material';
 import { GithubGist } from '../types/gist';
+import { ChangeEvent } from 'react';
 
 
 const mockedGithubGist: GithubGist = {
@@ -48,6 +49,7 @@ const fetch = jest.fn(() =>
   })
 );
 
+const mockGetGists = jest.fn();
 const mockSetGists = jest.fn();
 
 jest.spyOn(window.localStorage.__proto__, 'setItem');
@@ -56,6 +58,7 @@ window.localStorage.__proto__.setItem = jest.fn();
 jest.spyOn(window.localStorage.__proto__, 'getItem');
 window.localStorage.__proto__.getItem = jest.fn();
 
+const changeEventFunction = (value: unknown = "") => ({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
 
 describe("App functionality", () => {
   beforeEach(() => {
@@ -64,9 +67,21 @@ describe("App functionality", () => {
 
   it("should save favorited item to localStorage when checkbox is clicked", async () => {
     const wrapper = shallow(<App />);
-    const gists = await getGists("elizabethgulsby", mockSetGists);
-    const checkbox = wrapper.find(Checkbox);
+    const button = wrapper.find(Button);
+    const input = wrapper.find(Input);
+    console.log(wrapper.debug());
+    // input.invoke("onChange")?.(changeEventFunction("elizabethgulsby"));
+    input.simulate("change",  ({ target: { id: "inputName", value: "elizabethgulsby" }} as ChangeEvent<HTMLInputElement>));
+    console.log(wrapper.debug());
+    console.log(wrapper.find(Input).props());
+    expect(wrapper.find(Input).props().value).toBe("elizabethgulsby");
+    // button.invoke("onClick");
+    // const gists = await getGists("elizabethgulsby", mockGetGists);
+    // wrapper.update();
+    // console.log(wrapper.debug());
+    // const checkbox = wrapper.find(Checkbox).at(1);
     // checkbox.invoke("onClick");
+    // expect(gists).toEqual(mockedGithubGist);
     // expect(localStorage.setItem).toHaveBeenCalledTimes(1);
     // expect(localStorage.getItem).toHaveLength(1);
   });

@@ -11,7 +11,7 @@ export const getGists = async(user: string, set: (value: React.SetStateAction<Gi
       method: 'GET'
     });
     const userGists = await response.json();
-    console.log(userGists);
+    // console.log(userGists);
     set(userGists);
   } catch (error) {
     console.error(error);
@@ -33,24 +33,11 @@ export default function App() {
     }
   }, []);
 
-  // async function getGists (user: string) {
-  //   try {
-  //     const response = await fetch("https:api.github.com/users/" + user + "/gists", {
-  //       method: 'GET'
-  //     });
-  //     const userGists = await response.json();
-  //     setGists(userGists);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const addFav = (event: React.ChangeEvent<HTMLInputElement>, favorite: number) => {
     // Check if the favorited item exists in the current list of favorites
     const index = favorites.indexOf(favorite);
-    // If the checkbox is checked and favorite is not part of favorites list already
+    // If the checkbox is checked and favorite is not part of favorites list already, add checked item to favorites array as well as localStorage
     if (event.target.checked && index === -1) {
-      // add checked item to favorites array as well as localStorage
       const updatedFavorites = [...favorites, favorite];
       setFavorites(updatedFavorites)
       window.localStorage.setItem("favorite", JSON.stringify(updatedFavorites));
@@ -100,7 +87,6 @@ export default function App() {
     setTerm(event.target.value);
   };
 
-  // TODO: maybe re-add the event for preventDefault()
   const onSubmit = () => {
     getGists(term, setGists);
     setSubmitted(true); 
@@ -109,14 +95,11 @@ export default function App() {
   return (
     <div className="App">
       <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
-        <Input onChange={handleChange} />
+        <Input id="inputName" onChange={handleChange} />
         <Button variant="outlined" size="small" onClick={onSubmit}>Search</Button>
       </Stack>
-      {/* search results (populous or no results) or errors/result of bad requests go here */}
+      {/* search results or errors/result of bad requests go here */}
       <div>{submitted && gists !== undefined ? gistsTable(gists) : undefined}</div>
     </div>
   );
 }
-
-// TODO: write tests for favoriting logic
-// TODO: write readme
